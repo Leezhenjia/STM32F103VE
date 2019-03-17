@@ -10,8 +10,7 @@
  *	prescaler决定频率
  *	period决定计数次数
  */
-#define TIMER6
-#ifdef TIMER6
+#if 0
 // 定时器TIM6
 #define            BASIC_TIM6                   TIM6
 #define            BASIC_TIM6_APBxClock_FUN     RCC_APB1PeriphClockCmd
@@ -33,7 +32,7 @@
 
 /**************************函数声明********************************/
 
-void TIM6Init(void);
+void TIM7Init(void);
 
 
 #endif	/* __BSP_TIME_H */

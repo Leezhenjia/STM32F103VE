@@ -29,7 +29,7 @@
 
 
 extern OS_EVENT *Usart_Send_Mbox;
-extern OS_EVENT *Tim6_Analysis_Mbox;
+extern OS_EVENT *Tim7_Analysis_Mbox;
 volatile uint32_t time = 0; //字符时间计数
 
 /** @addtogroup STM32F10x_StdPeriph_Template
@@ -188,19 +188,18 @@ void DEBUG_USART_IRQHandler(void)
     函数体中用到的公共资源：
     更新后的上述资源： 
 *************************************************************************/
-void  BASIC_TIM6_IRQHandler(void)
+void  BASIC_TIM7_IRQHandler(void)
 {
     OSIntEnter();
-	if (TIM_GetITStatus(BASIC_TIM6, TIM_IT_Update) != RESET )
+	if (TIM_GetITStatus(BASIC_TIM7, TIM_IT_Update) != RESET )
 	{
-		TIM_ClearITPendingBit(BASIC_TIM6, TIM_FLAG_Update);
+		TIM_ClearITPendingBit(BASIC_TIM7, TIM_FLAG_Update);
 		time++;
-        LED1_ON;
 		if (time > 7)
 		{
-			BASIC_TIM6_APBxClock_FUN(BASIC_TIM6_CLK, DISABLE);//超过3.5字符时间不再接收,关闭字符累计计时
+			BASIC_TIM7_APBxClock_FUN(BASIC_TIM7_CLK, DISABLE);//超过3.5字符时间不再接收,关闭字符累计计时
 			time = 0;
-            OSMboxPost(Tim6_Analysis_Mbox, (void *)1);   //发送给解析任务
+            OSMboxPost(Tim7_Analysis_Mbox, (void *)1);   //发送给解析任务
 		}
 	}
     OSIntExit();

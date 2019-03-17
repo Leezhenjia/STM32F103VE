@@ -6,7 +6,6 @@
 
 uint8_t TX_EN = 0;//发送模式
 uint8_t RX_EN = 0;//接收模式
-uint8_t RxOverFlag = 0;//接收完成
 extern volatile uint32_t time;
 extern uint16_t RX_CNT;
 uint8_t EXCEPTION_CODE = 0;//异常码
@@ -31,8 +30,6 @@ void ModbusRTU(void)
 		case 0:
 			RX_CNT = 0;//清零无法解析的数据
 			MasterTService(SlaverAddr, Fuction, StartAddr, ValueOrLenth);
-			RxOverFlag = 0;	//接收完成位清零
-			USART_ITConfig(DEBUG_USARTx, USART_IT_RXNE, ENABLE);	//开启串口接收中断
 			break;
 	}
 }
@@ -99,7 +96,7 @@ void MasterAnalyService()//解析接收到的数据
 	{
 		switch (RX_BUFF[1])
 		{
-			case 3:
+			case 0x03:
 				MasterAnaly03();
 				break;
 			case 6:
@@ -145,7 +142,6 @@ void MasterAnaly03(void)
 	{
 		EXCEPTION_CODE = 3;
 	}
-	RX_CNT = 0;//解析完成将接收缓冲区计数清零
 }
 void MasterAnaly04(void)
 {
@@ -171,7 +167,6 @@ void MasterAnaly06(void)
 	{
 		EXCEPTION_CODE	= 5;//自定义异常码,CRC校验未通过
 	}
-	RX_CNT = 0;//解析完成将接收缓冲区计数清零
 }
 
 

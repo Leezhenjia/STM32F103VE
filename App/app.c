@@ -19,7 +19,7 @@ OS_STK analysis_task_stk[STARTUP_TASK_STK_SIZE];
 OS_STK disp_task_stk[STARTUP_TASK_STK_SIZE]; //定义四个函数栈
  
 OS_EVENT *Usart_Send_Mbox;  //邮箱,将USART收到数据发送到Receive任务
-OS_EVENT *Tim6_Analysis_Mbox;  //邮箱,定时器6通知Analysis任务开始解析数据
+OS_EVENT *Tim7_Analysis_Mbox;  //邮箱,定时器7通知Analysis任务开始解析数据
 
 extern volatile uint32_t time; //字符时间计数
 extern uint8_t RX_BUFF[2048];//接收缓冲区
@@ -32,7 +32,7 @@ void Task_Start(void *p_arg)
 	(void)p_arg;	//规避编译器警告
     
     Usart_Send_Mbox = OSMboxCreate((void *)0);
-    Tim6_Analysis_Mbox = OSMboxCreate((void *)0);
+    Tim7_Analysis_Mbox = OSMboxCreate((void *)0);
     
 #if OS_STK_GROWTH == 1
     OSTaskCreate(Task_Send, (void *)0, &send_task_stk[STARTUP_TASK_STK_SIZE - 1], SEND_TASK_PRIO);
@@ -76,7 +76,7 @@ void Task_Receive(void *p_arg)
         {
             if (0 == RX_CNT)
             {
-                BASIC_TIM6_APBxClock_FUN(BASIC_TIM6_CLK, ENABLE);//开启TIM6计时,累计帧间断时间
+                BASIC_TIM7_APBxClock_FUN(BASIC_TIM7_CLK, ENABLE);//开启TIM6计时,累计帧间断时间
             }
             RX_BUFF[RX_CNT] = *Temp;
             RX_CNT++;
@@ -95,8 +95,7 @@ void Task_Analysis(void *p_arg)
     
 	while (1)
 	{
-        
-        OSMboxPend(Tim6_Analysis_Mbox, 0, &err);    //接收数据完成
+        OSMboxPend(Tim7_Analysis_Mbox, 0, &err);    //接收数据完成
         MasterAnalyService();   //开始解析 
 	}
 }
@@ -119,25 +118,20 @@ void Task_Disp(void *p_arg)
         LCD_SetFont(&Font16x24);
         LCD_SetTextColor(GREEN);
 
-//        switch (RX_BUFF[1])
-//        {
-//            case 3:
-//                for(i = 0; i < (RX_BUFF[2] / 2); i++)
-//                ILI9341_DispVariable_EN(LINE(i + 1), "REG:", MasterRead[i]);
-//                if(EXCEPTION_CODE != 0)ILI9341_DispVariable_EN(LINE(i), "EXC_C:", (uint16_t)EXCEPTION_CODE);
-//                break;
-//            case 6:
-//                ILI9341_DispVariable_EN(LINE(1), "REG:", MasterRead[1]);
-//                if(EXCEPTION_CODE != 0)ILI9341_DispVariable_EN(LINE(2), "EXC_C:", (uint16_t)EXCEPTION_CODE);
-//                break;
-//            default:
-//                break;
-//        }
-        for (i = 0; i < RX_CNT; i++)
+        switch (RX_BUFF[1])
         {
-            ILI9341_DispVariable_EN(LINE(i + 1), "REG:", MasterRead[i]);
+            case 3:
+                for(i = 0; i < (RX_BUFF[2] / 2); i++)
+                ILI9341_DispVariable_EN(LINE(i + 1), "REG:", MasterRead[i]);
+                if(EXCEPTION_CODE != 0)ILI9341_DispVariable_EN(LINE(i+2), "EXC_C:", (uint16_t)EXCEPTION_CODE);
+                break;
+            case 6:
+                ILI9341_DispVariable_EN(LINE(1), "REG:", MasterRead[1]);
+                if(EXCEPTION_CODE != 0)ILI9341_DispVariable_EN(LINE(2), "EXC_C:", (uint16_t)EXCEPTION_CODE);
+                break;
+            default:
+                break;
         }
-        ILI9341_DispVariable_EN(LINE(i + 2), "CNT:", RX_CNT);
 
 	
         OSTimeDlyHMSM(0, 0, 0, 500);
