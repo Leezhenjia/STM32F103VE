@@ -15,5 +15,9 @@
 #include "Modbus_m.h"       //MODBUS规约函数
 #include "CRC.h"            //CRC冗余检验函数
 #include "bsp_tim.h"     //定时器函数
+#include "bsp_spi_flash.h"  //flash驱动
+#include "bsp_xpt2046_lcd.h"//触摸屏驱动函数
+#include "touchapp.h"        //触摸屏界面处理函数
+#include "display.h"        //显示屏显示函数
 
 #endif //__INCLUDES_H__

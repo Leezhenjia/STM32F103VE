@@ -1,3 +1,2 @@
-TASKSTART: 启动两个任务TASKDIS和TASKADD
-TASKDIS: 显示数字
-TASKADD: 自增变量
+功能: 基于MODBUS规约向子站发送命令,可通过触摸屏控制
+说明:暂支持03, 06功能码

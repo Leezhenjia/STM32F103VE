@@ -1140,26 +1140,7 @@ void LCD_ClearLine(uint16_t Line)
   ILI9341_Clear(0,Line,LCD_X_LENGTH,((sFONT *)LCD_GetFont())->Height);	/* 清屏，显示全黑 */
 
 }
-/**
-  * @brief  显示变量
-  * @param  Line: 要显示的行
-  *   		words:显示的字符串
-  * 		variable:显示的变量
-  * @retval None
-  */
-void ILI9341_DispVariable_EN(uint16_t line, char * words, uint16_t variable	)
-{
-	char dispBuff[100];
-	LCD_SetFont(&Font16x24);
-	LCD_SetTextColor(GREEN);
 
-	/*使用c标准库把变量转化成字符串*/
-	sprintf(dispBuff,"%s%d ",words ,variable);
-	LCD_ClearLine(line);	/* 清除单行文字 */
-	
-	/*然后显示该字符串即可，其它变量也是这样处理*/
-	ILI9341_DispStringLine_EN(line,dispBuff);
-}
 /*********************end of file*************************/
 
 

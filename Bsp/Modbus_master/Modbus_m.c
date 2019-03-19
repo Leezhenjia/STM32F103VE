@@ -1,3 +1,14 @@
+/***************************************************************************
+    版权所有：lizhenjia
+    版本号： 1.00 
+    文件名： Modbus_m.c 
+    生成日期：2019.3.15 
+    作者： lizhenjia 
+    功能说明：Modbus主机发送解析
+    与所属工程文件的关系： 通信处理文件
+    其它说明：暂支持03,06功能码
+    修改记录：
+***************************************************************************/
 #include "Modbus_m.h"
 #include "bsp_usart.h"
 #include "CRC.h"
@@ -22,16 +33,10 @@ uint16_t  ValueOrLenth = 0x03;  //数据or长度
 
 void ModbusRTU(void)
 {
-	static uint8_t i = 0;
-	
-	
-	switch(i)
-	{
-		case 0:
-			RX_CNT = 0;//清零无法解析的数据
-			MasterTService(SlaverAddr, Fuction, StartAddr, ValueOrLenth);
-			break;
-	}
+    RX_CNT = 0;//清零无法解析的数据
+    //TODO:后续考虑是否选择性清零    
+    EXCEPTION_CODE = 0;//异常码清零
+	MasterTService(SlaverAddr, Fuction, StartAddr, ValueOrLenth);
 }
 
 
@@ -68,8 +73,6 @@ void Master_03(uint8_t board_addr, uint16_t start_addr, uint16_t length)
 	Usart_SendArray(USART1, TX_BUFF, 8);
 }
 
-void Master_04(uint8_t board_addr,uint16_t start_addr,uint16_t length)
-{}
 	
 void Master_06(uint8_t board_addr, uint16_t start_addr, uint16_t value)
 {
@@ -143,10 +146,7 @@ void MasterAnaly03(void)
 		EXCEPTION_CODE = 3;
 	}
 }
-void MasterAnaly04(void)
-{
-	
-}
+
 void MasterAnaly06(void)
 {
 	uint16_t calCRC = 0;
@@ -168,6 +168,4 @@ void MasterAnaly06(void)
 		EXCEPTION_CODE	= 5;//自定义异常码,CRC校验未通过
 	}
 }
-
-
 	

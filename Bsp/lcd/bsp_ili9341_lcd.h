@@ -190,7 +190,6 @@ void                     ILI9341_DrawCircle              ( uint16_t usX_Center, 
 void                     ILI9341_DispChar_EN             ( uint16_t usX, uint16_t usY, const char cChar );
 void                     ILI9341_DispStringLine_EN      ( uint16_t line, char * pStr );
 void                     ILI9341_DispString_EN      			( uint16_t usX, uint16_t usY, char * pStr );
-void 					ILI9341_DispVariable_EN				(uint16_t line, char * words, uint16_t variable	);//±‰¡øœ‘ æ
 void 											ILI9341_DispString_EN_YDir 		(   uint16_t usX,uint16_t usY ,  char * pStr );
 
 void 											LCD_SetFont											(sFONT *fonts);
